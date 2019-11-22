@@ -1,11 +1,11 @@
-import { Process } from '../process';
+import { Process } from '../src/process';
 import { testFixture } from './helper';
 
 describe('Process Test', () => {
     it('execute phpunit', async () => {
-        const process = new Process();
         let output = '';
 
+        const process = new Process();
         process.on('data', (data: Buffer) => (output += data.toString()));
 
         const command = [
@@ -16,7 +16,7 @@ describe('Process Test', () => {
         ].join(' ');
 
         const code = await process.exec(command, {
-            cwd: __dirname + '/../testFixture',
+            cwd: testFixture(),
         });
 
         expect(code).toBe(0);
