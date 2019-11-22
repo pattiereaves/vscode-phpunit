@@ -1,5 +1,6 @@
 import { Process } from '../src/process';
-import { testFixture } from './helper';
+import { projectStub } from './helper';
+import { isNumber } from 'util';
 
 describe('Process Test', () => {
     it('execute phpunit', async () => {
@@ -9,17 +10,19 @@ describe('Process Test', () => {
         process.on('data', (data: Buffer) => (output += data.toString()));
 
         const command = [
-            testFixture('vendor/bin/phpunit'),
-            testFixture('tests/SampleTest.php'),
+            projectStub('vendor/bin/phpunit'),
             '-c',
-            testFixture('phpunit.xml'),
+            projectStub('phpunit.xml'),
         ].join(' ');
 
         const code = await process.exec(command, {
-            cwd: testFixture(),
+            cwd: projectStub(),
         });
 
-        expect(code).toBe(0);
+        expect(isNumber(code)).toBeTruthy();
         expect(process.getOutput()).toEqual(output);
+        expect(output).toMatch(
+            /PHPUnit \d+\.\d+\.\d+ by Sebastian Bergmann and contributors/,
+        );
     });
 });
