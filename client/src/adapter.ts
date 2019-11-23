@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import { EventEmitter, Event, WorkspaceFolder } from 'vscode';
 import {
     TestAdapter,
     TestLoadStartedEvent,
@@ -18,28 +18,28 @@ import { loadFakeTests, runFakeTests } from './fakeTests';
 export class ExampleAdapter implements TestAdapter {
     private disposables: { dispose(): void }[] = [];
 
-    private readonly testsEmitter = new vscode.EventEmitter<
+    private readonly testsEmitter = new EventEmitter<
         TestLoadStartedEvent | TestLoadFinishedEvent
     >();
-    private readonly testStatesEmitter = new vscode.EventEmitter<
+    private readonly testStatesEmitter = new EventEmitter<
         TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent
     >();
-    private readonly autorunEmitter = new vscode.EventEmitter<void>();
+    private readonly autorunEmitter = new EventEmitter<void>();
 
-    get tests(): vscode.Event<TestLoadStartedEvent | TestLoadFinishedEvent> {
+    get tests(): Event<TestLoadStartedEvent | TestLoadFinishedEvent> {
         return this.testsEmitter.event;
     }
-    get testStates(): vscode.Event<
+    get testStates(): Event<
         TestRunStartedEvent | TestRunFinishedEvent | TestSuiteEvent | TestEvent
     > {
         return this.testStatesEmitter.event;
     }
-    get autorun(): vscode.Event<void> | undefined {
+    get autorun(): Event<void> | undefined {
         return this.autorunEmitter.event;
     }
 
     constructor(
-        public readonly workspace: vscode.WorkspaceFolder,
+        public readonly workspace: WorkspaceFolder,
         private readonly log: Log,
     ) {
         this.log.info('Initializing example adapter');

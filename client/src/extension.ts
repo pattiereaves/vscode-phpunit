@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as path from 'path';
+import { join } from 'path';
 import { workspace, ExtensionContext, extensions } from 'vscode';
 import { TestHub, testExplorerExtensionId } from 'vscode-test-adapter-api';
 import { Log, TestAdapterRegistrar } from 'vscode-test-adapter-util';
@@ -21,7 +21,7 @@ let client: LanguageClient;
 export function activate(context: ExtensionContext) {
     // The server is implemented in node
     let serverModule = context.asAbsolutePath(
-        path.join('server', 'out', 'server.js'),
+        join('server', 'out', 'server.js'),
     );
     // The debug options for the server
     // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
