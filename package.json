@@ -16,8 +16,10 @@
     "engines": {
         "vscode": "^1.33.0"
     },
+    "extensionDependencies": [
+        "hbenl.vscode-test-explorer"
+    ],
     "activationEvents": [
-        "onLanguage:plaintext",
         "*"
     ],
     "main": "./client/out/extension",
@@ -42,6 +44,16 @@
                     ],
                     "default": "off",
                     "description": "Traces the communication between VS Code and the language server."
+                },
+                "exampleExplorer.logpanel": {
+                    "description": "write diagnotic logs to an output panel",
+                    "type": "boolean",
+                    "scope": "resource"
+                },
+                "exampleExplorer.logfile": {
+                    "description": "write diagnostic logs to the given file",
+                    "type": "string",
+                    "scope": "resource"
                 }
             }
         }
@@ -54,9 +66,12 @@
         "test": "sh ./scripts/e2e.sh"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.23",
         "@types/node": "^12.12.11",
         "tslint": "^5.20.1",
         "typescript": "^3.7.2"
+    },
+    "dependencies": {
+        "@types/jest": "^24.0.23",
+        "@types/mocha": "^5.2.7"
     }
 }
