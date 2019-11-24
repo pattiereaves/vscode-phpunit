@@ -9,7 +9,7 @@ export async function getAdapter() {
         predicate => predicate instanceof TestAdapterRegistrar,
     ) as TestAdapterRegistrar<ExampleAdapter>;
 
-    return adapterRegistrar.getAdapter(workspace.workspaceFolders[0]);
+    return adapterRegistrar.getAdapter(workspace.workspaceFolders![0])!;
 }
 
 export async function sleep(seconds: number) {

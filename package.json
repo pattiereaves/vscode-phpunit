@@ -59,17 +59,31 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+        "vscode:prepublish": "npm run webpack",
+        "webpack": "npm run clean && webpack --mode production --config ./client/webpack.config.js && webpack --mode production --config ./server/webpack.config.js",
+        "webpack:dev": "npm run clean && webpack --mode development --config ./client/webpack.config.js && webpack --mode development --config ./server/webpack.config.js",
         "compile": "tsc -b",
+        "compile:client": "tsc -b ./client/tsconfig.json",
+        "compile:server": "tsc -b ./server/tsconfig.json",
         "watch": "tsc -b -w",
+        "lint": "npm run lint:client && npm run lint:server",
+        "lint:client": "eslint --config ./client/.eslintrc.json ./client/src/*.ts",
+        "lint:server": "eslint --config ./server/.eslintrc.json ./server/src/*.ts",
+        "clean": "rimraf client/out && rimraf server/out",
         "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
         "test": "sh ./scripts/e2e.sh"
     },
     "devDependencies": {
-        "@types/mocha": "^5.2.7",
         "@types/node": "^12.12.11",
+        "@typescript-eslint/parser": "^2.8.0",
+        "eslint": "^6.7.0",
+        "merge-options": "^2.0.0",
+        "rimraf": "^3.0.0",
+        "ts-loader": "^6.2.1",
         "tslint": "^5.20.1",
-        "typescript": "^3.7.2"
+        "typescript": "^3.7.2",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10"
     },
     "dependencies": {}
 }
