@@ -1,13 +1,10 @@
-import { extensions, workspace, ExtensionContext } from 'vscode';
+import { extensions, workspace } from 'vscode';
 import { TestAdapterRegistrar } from 'vscode-test-adapter-util';
 import { ExampleAdapter } from '../adapter';
 
 export async function getAdapter() {
     const extension = extensions.getExtension('vscode-samples.lsp-sample')!;
-    const context: ExtensionContext = await extension.activate();
-    const adapterRegistrar = context.subscriptions.find(
-        predicate => predicate instanceof TestAdapterRegistrar,
-    ) as TestAdapterRegistrar<ExampleAdapter>;
+    const adapterRegistrar: TestAdapterRegistrar<ExampleAdapter> = await extension.activate();
 
     return adapterRegistrar.getAdapter(workspace.workspaceFolders![0])!;
 }

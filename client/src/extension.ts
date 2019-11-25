@@ -18,7 +18,9 @@ import {
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(
+    context: ExtensionContext,
+): Promise<TestAdapterRegistrar<ExampleAdapter> | undefined> {
     // The server is implemented in node
     let serverModule = context.asAbsolutePath(
         join('server', 'out', 'server.js'),
@@ -59,6 +61,8 @@ export function activate(context: ExtensionContext) {
     // Start the client. This will also launch the server
     client.start();
 
+    await client.onReady();
+
     const workspaceFolder = (workspace.workspaceFolders || [])[0];
 
     // create a simple logger that can be configured with the configuration variables
@@ -68,29 +72,32 @@ export function activate(context: ExtensionContext) {
         workspaceFolder,
         'Example Explorer Log',
     );
+
     context.subscriptions.push(log);
 
     // get the Test Explorer extension
     const testExplorerExtension = extensions.getExtension<TestHub>(
         testExplorerExtensionId,
     );
+
     if (log.enabled) {
         log.info(`Test Explorer ${testExplorerExtension ? '' : 'not '}found`);
     }
 
-    if (testExplorerExtension) {
-        const testHub = testExplorerExtension.exports;
-
-        // this will register an ExampleTestAdapter for each WorkspaceFolder
-        context.subscriptions.push(
-            new TestAdapterRegistrar(
-                testHub,
-                workspaceFolder => new ExampleAdapter(workspaceFolder, log),
-                log,
-            ),
-        );
+    if (!testExplorerExtension) {
+        return;
     }
-    return context;
+
+    const testHub = testExplorerExtension.exports;
+    const testAdapterRegistrar = new TestAdapterRegistrar(
+        testHub,
+        workspaceFolder => new ExampleAdapter(workspaceFolder, client, log),
+        log,
+    );
+    // this will register an ExampleTestAdapter for each WorkspaceFolder
+    context.subscriptions.push(testAdapterRegistrar);
+
+    return testAdapterRegistrar;
 }
 
 export function deactivate(): Thenable<void> | undefined {

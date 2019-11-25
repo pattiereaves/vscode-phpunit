@@ -15,6 +15,8 @@ import {
     CompletionItem,
     CompletionItemKind,
     TextDocumentPositionParams,
+    WorkspaceFolder,
+    RequestType,
 } from 'vscode-languageserver';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
@@ -70,7 +72,6 @@ connection.onInitialized(() => {
             connection.console.log('Workspace folder change event received.');
         });
     }
-    connection.console.log('123');
 });
 
 // The example settings
@@ -237,6 +238,53 @@ connection.onDidCloseTextDocument((params) => {
 	connection.console.log(`${params.textDocument.uri} closed.`);
 });
 */
+
+namespace TestLoadTest {
+    export const type: RequestType<
+        WorkspaceFolder,
+        any,
+        any,
+        any
+    > = new RequestType('load');
+}
+
+connection.onRequest(TestLoadTest.type, (workspace: WorkspaceFolder) => {
+    connection.console.log(JSON.stringify(workspace));
+    return {
+        type: 'suite',
+        id: 'root',
+        label: 'Fake', // the label of the root node should be the name of the testing framework
+        children: [
+            {
+                type: 'suite',
+                id: 'nested',
+                label: 'Nested suite',
+                children: [
+                    {
+                        type: 'test',
+                        id: 'test1',
+                        label: 'Test #1',
+                    },
+                    {
+                        type: 'test',
+                        id: 'test2',
+                        label: 'Test #2',
+                    },
+                ],
+            },
+            {
+                type: 'test',
+                id: 'test3',
+                label: 'Test #3',
+            },
+            {
+                type: 'test',
+                id: 'test4',
+                label: 'Test #4',
+            },
+        ],
+    };
+});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

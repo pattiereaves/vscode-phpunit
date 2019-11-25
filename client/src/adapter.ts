@@ -9,8 +9,17 @@ import {
     TestEvent,
 } from 'vscode-test-adapter-api';
 import { Log } from 'vscode-test-adapter-util';
-import { loadFakeTests, runFakeTests } from './fakeTests';
+import { runFakeTests } from './fakeTests';
+import { LanguageClient, RequestType } from 'vscode-languageclient';
 
+namespace TestLoadTest {
+    export const type: RequestType<
+        WorkspaceFolder,
+        any,
+        any,
+        any
+    > = new RequestType('load');
+}
 /**
  * This class is intended as a starting point for implementing a "real" TestAdapter.
  * The file `README.md` contains further instructions.
@@ -40,6 +49,7 @@ export class ExampleAdapter implements TestAdapter {
 
     constructor(
         public readonly workspace: WorkspaceFolder,
+        private client: LanguageClient,
         private readonly log: Log,
     ) {
         this.log.info('Initializing example adapter');
@@ -54,11 +64,12 @@ export class ExampleAdapter implements TestAdapter {
 
         this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 
-        const loadedTests = await loadFakeTests();
-
         this.testsEmitter.fire(<TestLoadFinishedEvent>{
             type: 'finished',
-            suite: loadedTests,
+            suite: await this.client.sendRequest(
+                TestLoadTest.type,
+                this.workspace,
+            ),
         });
     }
 
