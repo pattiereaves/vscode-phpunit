@@ -63,7 +63,7 @@ export async function activate(
 
     await client.onReady();
 
-    const workspaceFolder = (workspace.workspaceFolders || [])[0];
+    const workspaceFolder = (workspace.workspaceFolders ?? [])[0];
 
     // create a simple logger that can be configured with the configuration variables
     // `exampleExplorer.logpanel` and `exampleExplorer.logfile`
