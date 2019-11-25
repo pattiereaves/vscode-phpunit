@@ -5,8 +5,8 @@ import * as jsonata from 'jsonata';
 
 const readFileAsync = promisify(readFile);
 
-export async function getTestsuites(file: string) {
-    const jsonData = parse((await readFileAsync(file)).toString(), {
+export function xml2json(contents: string) {
+    return parse(contents, {
         attributeNamePrefix: '_',
         ignoreAttributes: false,
         ignoreNameSpace: false,
@@ -15,6 +15,12 @@ export async function getTestsuites(file: string) {
         trimValues: true,
         textNodeName: '__text',
     });
+}
+
+export async function getTestsuites(file: string) {
+    const jsonData: any = await xml2json(
+        (await readFileAsync(file)).toString(),
+    );
 
     return jsonata('[**.testsuite]').evaluate(jsonData);
 }
