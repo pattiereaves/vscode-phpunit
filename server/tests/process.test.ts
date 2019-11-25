@@ -25,4 +25,12 @@ describe('Process Test', () => {
             /PHPUnit \d+\.\d+\.\d+ by Sebastian Bergmann and contributors/,
         );
     });
+
+    it('should kill the process', () => {
+        const process = new Process();
+        process.exec('sleep 5');
+
+        expect(process.kill()).toBeTruthy();
+        expect(process.kill()).toBeUndefined();
+    });
 });
