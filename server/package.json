@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@types/glob": "^7.1.1",
 		"@types/shell-quote": "^1.6.1",
-		"fast-xml-parser": "^3.14.0",
+		"fast-xml-parser": "^3.15.1",
 		"glob": "^7.1.6",
 		"jsonata": "^1.7.0",
 		"shell-quote": "^1.7.2",
@@ -24,6 +24,6 @@
 	"devDependencies": {
 		"@types/jest": "^24.0.23",
 		"jest": "^24.9.0",
-		"ts-jest": "^24.1.0"
+		"ts-jest": "^24.2.0"
 	}
 }
