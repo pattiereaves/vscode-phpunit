@@ -5,8 +5,7 @@
         "target": "es6",
         "outDir": "out",
         "rootDir": "src",
-        "sourceMap": true,
-        "types": ["declarations.d.ts"]
+        "sourceMap": true
     },
     "include": ["src"],
     "exclude": ["node_modules", ".vscode-test"],

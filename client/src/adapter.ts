@@ -1,4 +1,4 @@
-import { EventEmitter, Event, WorkspaceFolder } from 'vscode';
+import { EventEmitter, Event, WorkspaceFolder, workspace } from 'vscode';
 import {
     TestAdapter,
     TestLoadStartedEvent,
@@ -10,16 +10,17 @@ import {
 } from 'vscode-test-adapter-api';
 import { Log } from 'vscode-test-adapter-util';
 import { runFakeTests } from './fakeTests';
-import { LanguageClient, RequestType } from 'vscode-languageclient';
+import {
+    LanguageClient,
+    RequestType,
+    WorkspaceFolder as LspWorkspaceFolder,
+} from 'vscode-languageclient';
 
 namespace TestLoadTest {
-    export const type: RequestType<
-        WorkspaceFolder,
-        any,
-        any,
-        any
-    > = new RequestType('load');
+    // prettier-ignore
+    export const type: RequestType<LspWorkspaceFolder, any, any, any> = new RequestType('load');
 }
+
 /**
  * This class is intended as a starting point for implementing a "real" TestAdapter.
  * The file `README.md` contains further instructions.
@@ -61,15 +62,16 @@ export class ExampleAdapter implements TestAdapter {
 
     async load(): Promise<void> {
         this.log.info('Loading example tests');
+        console.log(workspace.getConfiguration().get('phpunit.test'));
 
         this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 
         this.testsEmitter.fire(<TestLoadFinishedEvent>{
             type: 'finished',
-            suite: await this.client.sendRequest(
-                TestLoadTest.type,
-                this.workspace,
-            ),
+            suite: await this.client.sendRequest(TestLoadTest.type, {
+                uri: this.workspace.uri.toString(),
+                name: this.workspace.name,
+            }),
         });
     }
 

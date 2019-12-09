@@ -46,6 +46,27 @@
                     "description": "write diagnostic logs to the given file",
                     "type": "string",
                     "scope": "resource"
+                },
+                "phpunit.php": {
+                    "type": "string",
+                    "description": "Absolute path to php. Fallback to global php if it exists on the command line.",
+                    "scope": "resource"
+                },
+                "phpunit.phpunit": {
+                    "type": "string",
+                    "description": "Path to phpunit. Can be the phpunit file or phpunit.phar.\n\nAutomatically finds it in common places:\n  - Composer vendor directory\n  - phpunit.phar in your project\n  - phpunit (or phpunit.bat for windows) globally on the command line",
+                    "scope": "resource"
+                },
+                "phpunit.command": {
+                    "type": "string",
+                    "description": "Custom command to run. Ex: `docker exec -t container_name`.",
+                    "scope": "resource"
+                },
+                "phpunit.args": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Any phpunit args (phpunit --help) E.g. --configuration ./phpunit.xml.dist",
+                    "scope": "resource"
                 }
             }
         }
@@ -66,8 +87,6 @@
         "test": "sh ./scripts/e2e.sh"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.23",
-        "@types/mocha": "^5.2.7",
         "@types/node": "^12.12.15",
         "@typescript-eslint/parser": "^2.10.0",
         "eslint": "^6.7.2",
