@@ -1,6 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+include __DIR__.'/TestCase.php';
 
 class StackTest extends TestCase
 {
@@ -18,7 +18,7 @@ class StackTest extends TestCase
     public function testPush(array $stack)
     {
         array_push($stack, 'foo');
-        $this->assertEquals('foo', $stack[count($stack)-1]);
+        $this->assertEquals('foo', $stack[count($stack) - 1]);
         $this->assertNotEmpty($stack);
 
         return $stack;

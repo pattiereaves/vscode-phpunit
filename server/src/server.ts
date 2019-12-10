@@ -5,9 +5,8 @@ import {
     DidChangeConfigurationNotification,
     WorkspaceFolder,
     RequestType,
-    IConnection,
 } from 'vscode-languageserver';
-import { ConfigFactory } from './config';
+import { SettingFactory } from './settings';
 
 let connection = createConnection(ProposedFeatures.all);
 
@@ -44,10 +43,10 @@ function log(x: any) {
 }
 
 connection.onRequest(TestLoadTest.type, async (workspace: WorkspaceFolder) => {
-    const configFactory = new ConfigFactory(connection);
-    const config = await configFactory.create(workspace);
+    const settingFactory = new SettingFactory(connection);
+    const setting = await settingFactory.create(workspace);
 
-    log(config);
+    log(setting);
 
     return {
         type: 'suite',

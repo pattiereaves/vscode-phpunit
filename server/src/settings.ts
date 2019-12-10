@@ -1,11 +1,11 @@
 import { IConnection, WorkspaceFolder } from 'vscode-languageserver';
 import { isArray, isObject, isString } from 'util';
 
-export class ConfigFactory {
+export class SettingFactory {
     constructor(private connection: IConnection) {}
 
     async create(workspaceFolder: WorkspaceFolder) {
-        return new Config(
+        return new Setting(
             this.replace(
                 await this.connection.workspace.getConfiguration({
                     scopeUri: workspaceFolder.uri,
@@ -41,7 +41,7 @@ export class ConfigFactory {
     }
 }
 
-export class Config {
+export class Setting {
     constructor(private items: any) {}
 
     all() {

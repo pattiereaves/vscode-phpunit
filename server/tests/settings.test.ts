@@ -1,5 +1,5 @@
 import URI, { setUriThrowOnMissingScheme } from 'vscode-uri';
-import { ConfigFactory, Config } from '../src/config';
+import { SettingFactory, Setting } from '../src/settings';
 import { projectStub } from './helper';
 
 setUriThrowOnMissingScheme(false);
@@ -23,25 +23,25 @@ class FakeConnection {
     workspace = new FakeWorkspace();
 }
 
-describe('Config Test Suite', () => {
+describe('Settings Test Suite', () => {
     const uri = URI.parse(projectStub());
     const workspaceFolder = { uri: uri.toString(), name: 'config' };
     const connection: any = new FakeConnection();
-    const factory = new ConfigFactory(connection);
+    const factory = new SettingFactory(connection);
 
-    let config: Config;
+    let setting: Setting;
 
     beforeEach(async () => {
-        config = await factory.create(workspaceFolder);
+        setting = await factory.create(workspaceFolder);
     });
 
-    it('get config', async () => {
+    it('get setting', async () => {
         const expected = JSON.parse(
             JSON.stringify(
                 await connection.workspace.getConfiguration(),
             ).replace(/\$\{workspaceFolder\}/g, workspaceFolder.uri),
         );
 
-        expect(config.all()).toEqual(expected);
+        expect(setting.all()).toEqual(expected);
     });
 });
