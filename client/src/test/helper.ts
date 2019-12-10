@@ -3,7 +3,7 @@ import { TestAdapterRegistrar } from 'vscode-test-adapter-util';
 import { ExampleAdapter } from '../adapter';
 
 export async function getAdapter() {
-    const extension = extensions.getExtension('vscode-samples.lsp-sample')!;
+    const extension = extensions.getExtension('recca0120.vscode-phpunit')!;
     const adapterRegistrar: TestAdapterRegistrar<ExampleAdapter> = await extension.activate();
 
     return adapterRegistrar.getAdapter(workspace.workspaceFolders![0])!;

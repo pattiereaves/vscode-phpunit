@@ -8,6 +8,6 @@
         "sourceMap": true
     },
     "include": ["src"],
-    "exclude": ["node_modules", ".vscode-test"],
+    "exclude": ["node_modules", ".vscode-test", "server/tests"],
     "references": [{ "path": "./client" }, { "path": "./server" }]
 }

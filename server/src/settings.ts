@@ -1,11 +1,16 @@
-import { IConnection, WorkspaceFolder } from 'vscode-languageserver';
+import * as minimist from 'minimist';
+import { join } from 'path';
+import { URL } from 'url';
 import { isArray, isObject, isString } from 'util';
+import { IConnection, WorkspaceFolder } from 'vscode-languageserver';
+import { accessAsync } from './helper';
 
 export class SettingFactory {
     constructor(private connection: IConnection) {}
 
     async create(workspaceFolder: WorkspaceFolder) {
         return new Setting(
+            workspaceFolder,
             this.replace(
                 await this.connection.workspace.getConfiguration({
                     scopeUri: workspaceFolder.uri,
@@ -18,7 +23,7 @@ export class SettingFactory {
 
     replace(config: any, workspaceFolder: WorkspaceFolder) {
         if (isString(config)) {
-            return this.replaceVariable(config, workspaceFolder);
+            return this.replaceVariables(config, workspaceFolder);
         }
 
         if (isArray(config)) {
@@ -36,13 +41,36 @@ export class SettingFactory {
         return config;
     }
 
-    private replaceVariable(value: any, workspaceFolder: WorkspaceFolder) {
+    private replaceVariables(value: any, workspaceFolder: WorkspaceFolder) {
         return value.replace(/\$\{workspaceFolder\}/g, workspaceFolder.uri);
     }
 }
 
 export class Setting {
-    constructor(private items: any) {}
+    constructor(private workspaceFolder: WorkspaceFolder, private items: any) {}
+
+    async getConfiguration() {
+        const argv = minimist(this.items.args);
+        const files = [
+            argv.c ?? argv.configuration,
+            'phpunit.xml',
+            'phpunit.xml.dist',
+        ];
+
+        for (let file of files) {
+            if (!file) {
+                continue;
+            }
+
+            if (!file.match(/^\/|\w:|file:/)) {
+                file = join(this.workspaceFolder.uri, file);
+            }
+
+            if (await accessAsync(new URL(file))) {
+                return file;
+            }
+        }
+    }
 
     all() {
         return this.items;
