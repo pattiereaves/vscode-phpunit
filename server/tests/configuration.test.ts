@@ -1,20 +1,20 @@
 import { join } from 'path';
 import { WorkspaceFolder } from 'vscode-languageserver';
 import URI, { setUriThrowOnMissingScheme } from 'vscode-uri';
-import { Setting, SettingFactory } from '../src/settings';
+import { Configuration, ConfigurationFactory } from '../src/configuration';
 import { projectStub } from './helper';
 
 class ConnectionStub {
     workspace = {
         getConfiguration: () => {
-            return Promise.resolve(this.settings);
+            return Promise.resolve(this.configuration);
         },
     };
-    constructor(private settings: any) {}
+    constructor(private configuration: any) {}
 }
 
-describe('Settings Test Suite', () => {
-    const defaultSetting = {
+describe('Configuration Test Suite', () => {
+    const defaultConfiguration = {
         php: '',
         phpunit: '${workspaceFolder}/vendor/bin/phpunit',
         args: ['--configuration', '${workspaceFolder}/phpunit.xml.dist'],
@@ -27,10 +27,12 @@ describe('Settings Test Suite', () => {
 
     let workspaceFolder: WorkspaceFolder;
 
-    function getFactory(setting = null) {
-        const connection: any = new ConnectionStub(setting ?? defaultSetting);
+    function getFactory(configuration = null) {
+        const connection: any = new ConnectionStub(
+            configuration ?? defaultConfiguration,
+        );
 
-        return [connection, new SettingFactory(connection)];
+        return [connection, new ConfigurationFactory(connection)];
     }
 
     beforeAll(() => {
@@ -42,11 +44,11 @@ describe('Settings Test Suite', () => {
     });
     afterAll(() => setUriThrowOnMissingScheme(true));
 
-    let setting: Setting;
+    let configuration: Configuration;
 
-    it('get setting', async () => {
+    it('get configuration', async () => {
         const [connection, factory] = getFactory();
-        setting = await factory.create(workspaceFolder);
+        configuration = await factory.create(workspaceFolder);
 
         const expected = JSON.parse(
             JSON.stringify(
@@ -54,44 +56,47 @@ describe('Settings Test Suite', () => {
             ).replace(/\$\{workspaceFolder\}/g, workspaceFolder.uri),
         );
 
-        expect(setting.all()).toEqual(expected);
+        expect(configuration.all()).toEqual(expected);
     });
 
-    it('get configuration from -c', async () => {
+    it('get configuration file from args -c', async () => {
         const [, factory] = getFactory(
-            Object.assign(defaultSetting, {
+            Object.assign(defaultConfiguration, {
                 args: ['-c', './phpunit.xml'],
             }),
         );
-        setting = await factory.create(workspaceFolder);
 
-        expect(await setting.getConfiguration()).toEqual(
+        configuration = await factory.create(workspaceFolder);
+
+        expect(await configuration.getConfigurationFile()).toEqual(
             join(workspaceFolder.uri, './phpunit.xml'),
         );
     });
 
-    it('get configuration from --configuration', async () => {
+    it('get configuration file from args --configuration', async () => {
         const [, factory] = getFactory(
-            Object.assign(defaultSetting, {
+            Object.assign(defaultConfiguration, {
                 args: ['--configuration', 'phpunit.xml.dist'],
             }),
         );
-        setting = await factory.create(workspaceFolder);
 
-        expect(await setting.getConfiguration()).toEqual(
+        configuration = await factory.create(workspaceFolder);
+
+        expect(await configuration.getConfigurationFile()).toEqual(
             join(workspaceFolder.uri, 'phpunit.xml.dist'),
         );
     });
 
-    it('get default configuration', async () => {
+    it('get default configuration file', async () => {
         const [, factory] = getFactory(
-            Object.assign(defaultSetting, {
+            Object.assign(defaultConfiguration, {
                 args: [],
             }),
         );
-        setting = await factory.create(workspaceFolder);
 
-        expect(await setting.getConfiguration()).toEqual(
+        configuration = await factory.create(workspaceFolder);
+
+        expect(await configuration.getConfigurationFile()).toEqual(
             join(workspaceFolder.uri, 'phpunit.xml'),
         );
     });

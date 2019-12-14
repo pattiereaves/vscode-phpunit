@@ -1,0 +1,3 @@
+[submodule "server/tests/horizon"]
+	path = server/tests/horizon
+	url = https://github.com/laravel/horizon.git

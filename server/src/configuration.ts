@@ -5,11 +5,11 @@ import { isArray, isObject, isString } from 'util';
 import { IConnection, WorkspaceFolder } from 'vscode-languageserver';
 import { accessAsync } from './helper';
 
-export class SettingFactory {
+export class ConfigurationFactory {
     constructor(private connection: IConnection) {}
 
     async create(workspaceFolder: WorkspaceFolder) {
-        return new Setting(
+        return new Configuration(
             workspaceFolder,
             this.replace(
                 await this.connection.workspace.getConfiguration({
@@ -41,15 +41,15 @@ export class SettingFactory {
         return config;
     }
 
-    private replaceVariables(value: any, workspaceFolder: WorkspaceFolder) {
+    private replaceVariables(value: string, workspaceFolder: WorkspaceFolder) {
         return value.replace(/\$\{workspaceFolder\}/g, workspaceFolder.uri);
     }
 }
 
-export class Setting {
+export class Configuration {
     constructor(private workspaceFolder: WorkspaceFolder, private items: any) {}
 
-    async getConfiguration() {
+    async getConfigurationFile() {
         const argv = minimist(this.items.args);
         const files = [
             argv.c ?? argv.configuration,

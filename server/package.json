@@ -19,6 +19,8 @@
         "glob": "^7.1.6",
         "jsonata": "^1.7.0",
         "minimist": "^1.2.0",
+        "php-parser": "^3.0.0-prerelease.9",
+        "php-reflection": "^2.3.1",
         "shell-quote": "^1.7.2",
         "vscode-languageserver": "^5.2.1"
     },
