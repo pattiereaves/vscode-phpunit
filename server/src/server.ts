@@ -7,12 +7,12 @@ import {
     TextDocumentSyncKind,
     WorkspaceFolder,
 } from 'vscode-languageserver';
-import { ConfigurationFactory } from './configuration';
+import { Settings } from './setting';
 
 let connection = createConnection(ProposedFeatures.all);
 
 let documents: TextDocuments<any> = new TextDocuments({
-    create: (...x) => {},
+    create: () => {},
     update: () => {},
 });
 
@@ -46,16 +46,13 @@ function log(x: any) {
     connection.console.log(JSON.stringify(x));
 }
 
+const settings = new Settings(connection);
+
 connection.onRequest(
     TestLoadTest.type,
     async (workspaceFolder: WorkspaceFolder) => {
-        const configuartionFactory = new ConfigurationFactory(connection);
-        const configuration = await configuartionFactory.create(
-            workspaceFolder,
-        );
-
-        log(workspaceFolder);
-        log(configuration);
+        const setting = await settings.get(workspaceFolder);
+        log(setting.all());
 
         return {
             type: 'suite',
