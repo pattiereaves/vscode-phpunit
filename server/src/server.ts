@@ -4,17 +4,21 @@ import {
     ProposedFeatures,
     RequestType,
     TextDocuments,
+    TextDocumentSyncKind,
     WorkspaceFolder,
 } from 'vscode-languageserver';
 import { ConfigurationFactory } from './configuration';
 
 let connection = createConnection(ProposedFeatures.all);
 
-let documents: TextDocuments = new TextDocuments();
+let documents: TextDocuments<any> = new TextDocuments({
+    create: (...x) => {},
+    update: () => {},
+});
 
 connection.onInitialize(() => ({
     capabilities: {
-        textDocumentSync: documents.syncKind,
+        textDocumentSync: TextDocumentSyncKind.Full,
     },
 }));
 
@@ -42,47 +46,53 @@ function log(x: any) {
     connection.console.log(JSON.stringify(x));
 }
 
-connection.onRequest(TestLoadTest.type, async (workspace: WorkspaceFolder) => {
-    const configuartionFactory = new ConfigurationFactory(connection);
-    const configuration = await configuartionFactory.create(workspace);
+connection.onRequest(
+    TestLoadTest.type,
+    async (workspaceFolder: WorkspaceFolder) => {
+        const configuartionFactory = new ConfigurationFactory(connection);
+        const configuration = await configuartionFactory.create(
+            workspaceFolder,
+        );
 
-    log(configuration);
+        log(workspaceFolder);
+        log(configuration);
 
-    return {
-        type: 'suite',
-        id: 'root',
-        label: 'Fake', // the label of the root node should be the name of the testing framework
-        children: [
-            {
-                type: 'suite',
-                id: 'nested',
-                label: 'Nested suite',
-                children: [
-                    {
-                        type: 'test',
-                        id: 'test1',
-                        label: 'Test #1',
-                    },
-                    {
-                        type: 'test',
-                        id: 'test2',
-                        label: 'Test #2',
-                    },
-                ],
-            },
-            {
-                type: 'test',
-                id: 'test3',
-                label: 'Test #3',
-            },
-            {
-                type: 'test',
-                id: 'test4',
-                label: 'Test #4',
-            },
-        ],
-    };
-});
+        return {
+            type: 'suite',
+            id: 'root',
+            label: 'Fake', // the label of the root node should be the name of the testing framework
+            children: [
+                {
+                    type: 'suite',
+                    id: 'nested',
+                    label: 'Nested suite',
+                    children: [
+                        {
+                            type: 'test',
+                            id: 'test1',
+                            label: 'Test #1',
+                        },
+                        {
+                            type: 'test',
+                            id: 'test2',
+                            label: 'Test #2',
+                        },
+                    ],
+                },
+                {
+                    type: 'test',
+                    id: 'test3',
+                    label: 'Test #3',
+                },
+                {
+                    type: 'test',
+                    id: 'test4',
+                    label: 'Test #4',
+                },
+            ],
+        };
+    },
+);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

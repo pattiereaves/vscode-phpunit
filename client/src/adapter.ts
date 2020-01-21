@@ -1,20 +1,20 @@
-import { EventEmitter, Event, WorkspaceFolder, workspace } from 'vscode';
-import {
-    TestAdapter,
-    TestLoadStartedEvent,
-    TestLoadFinishedEvent,
-    TestRunStartedEvent,
-    TestRunFinishedEvent,
-    TestSuiteEvent,
-    TestEvent,
-} from 'vscode-test-adapter-api';
-import { Log } from 'vscode-test-adapter-util';
-import { runFakeTests } from './fakeTests';
+import { Event, EventEmitter, WorkspaceFolder } from 'vscode';
 import {
     LanguageClient,
     RequestType,
     WorkspaceFolder as LspWorkspaceFolder,
 } from 'vscode-languageclient';
+import {
+    TestAdapter,
+    TestEvent,
+    TestLoadFinishedEvent,
+    TestLoadStartedEvent,
+    TestRunFinishedEvent,
+    TestRunStartedEvent,
+    TestSuiteEvent,
+} from 'vscode-test-adapter-api';
+import { Log } from 'vscode-test-adapter-util';
+import { runFakeTests } from './fakeTests';
 
 namespace TestLoadTest {
     // prettier-ignore
@@ -62,7 +62,6 @@ export class ExampleAdapter implements TestAdapter {
 
     async load(): Promise<void> {
         this.log.info('Loading example tests');
-        console.log(workspace.getConfiguration().get('phpunit.test'));
 
         this.testsEmitter.fire(<TestLoadStartedEvent>{ type: 'started' });
 

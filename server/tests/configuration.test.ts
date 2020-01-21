@@ -1,6 +1,7 @@
 import { join } from 'path';
+import { pathToFileURL } from 'url';
 import { WorkspaceFolder } from 'vscode-languageserver';
-import URI, { setUriThrowOnMissingScheme } from 'vscode-uri';
+// import URI from 'vscode-uri';
 import { Configuration, ConfigurationFactory } from '../src/configuration';
 import { projectStub } from './helper';
 
@@ -36,13 +37,11 @@ describe('Configuration Test Suite', () => {
     }
 
     beforeAll(() => {
-        setUriThrowOnMissingScheme(false);
         workspaceFolder = {
-            uri: URI.parse(projectStub()).toString(),
+            uri: pathToFileURL(projectStub()).toString(),
             name: 'config',
         };
     });
-    afterAll(() => setUriThrowOnMissingScheme(true));
 
     let configuration: Configuration;
 
